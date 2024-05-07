@@ -1,0 +1,61 @@
+version: "2.27.0"
+
+
+services:
+  client_1:
+    container_name: data_link_client_1
+    mac_address: 03:18:E6:93:0A:99
+    build: .
+    volumes:
+      - ./:/code
+    command: cargo run --bin client
+    tty: true
+    cap_add:
+    - NET_ADMIN
+    networks:
+      - host-based-network
+  client_2:
+    container_name: data_link_client_2
+    mac_address: EB:56:26:2A:48:91
+    build: .
+    command: cargo run --bin client
+    volumes:
+      - ./:/code
+    tty: true
+    cap_add:
+    - NET_ADMIN
+    networks:
+      - host-based-network
+  server:
+    container_name: data_link_server
+    mac_address: AF:89:41:BC:B2:E2
+    build: .
+    command: cargo run --bin server
+    volumes:
+      - ./:/code
+    tty: true
+    cap_add:
+    - NET_ADMIN
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks:
+      - host-based-network
+  bridge:
+    container_name: data_link_bridge
+    mac_address: 67:8C:B1:E2:8B:5B
+    build: .
+    command: cargo run --bin bridge
+    volumes:
+      - ./:/code
+    tty: true
+    cap_add:
+    - NET_ADMIN
+    ports:
+      - "127.0.0.1:8081:8081"
+    networks:
+      - host-based-network
+
+
+networks:
+  aloha-network:
+    driver: macvlan
